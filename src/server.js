@@ -6,7 +6,6 @@
 */
 
 const http = require('http');
-const url = require('url');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
@@ -28,8 +27,8 @@ const parseBody = (request, response, handler) => {
 
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
-    const bodyParams = query.parse(bodyString);
-    handler(request, response, bodyParams);
+    request.body = query.parse(bodyString);
+    handler(request, response);
   });
 };
 
@@ -50,7 +49,8 @@ const handleGet = (request, response, parsedUrl) => {
 };
 
 const onRequest = (request, response) => {
-  const parsedUrl = url.parse(request.url);
+  const protocol = request.connection.encrypted ? 'https' : 'http';
+  const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
 
   if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);
