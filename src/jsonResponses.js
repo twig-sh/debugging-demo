@@ -3,13 +3,14 @@
 const users = {};
 
 const respondJSON = (request, response, status, object) => {
-  response.writeHead(status, { 'Content-Type': 'application/json' });
-  response.write(JSON.stringify(object));
-  response.end();
-};
-
-const respondJSONMeta = (request, response, status) => {
-  response.writeHead(status, { 'Content-Type': 'application/json' });
+  const content = JSON.stringify('content');
+  response.writeHead(status, { 
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(content, 'utf8'),
+  });
+  if(request.method !== 'HEAD' && status != 204){
+    response.write(JSON.stringify(object));
+  }
   response.end();
 };
 
@@ -47,7 +48,7 @@ const addUser = (request, response) => {
     return respondJSON(request, response, responseCode, responseJSON);
   }
 
-  return respondJSONMeta(request, response, responseCode);
+  return respondJSON(request, response, responseCode, {});
 };
 
 module.exports = {
