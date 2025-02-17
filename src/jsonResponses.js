@@ -4,11 +4,11 @@ const users = {};
 
 const respondJSON = (request, response, status, object) => {
   const content = JSON.stringify('content');
-  response.writeHead(status, { 
+  response.writeHead(status, {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(content, 'utf8'),
   });
-  if(request.method !== 'HEAD' && status != 204){
+  if (request.method !== 'HEAD' && status != 204) {
     response.write(JSON.stringify(object));
   }
   response.end();
@@ -33,7 +33,7 @@ const addUser = (request, response) => {
   }
 
   let responseCode = 204;
-  const {name, age} = request.body;
+  const { name, age } = request.body;
   if (!users[name]) {
     responseCode = 201;
     users[name] = {};
